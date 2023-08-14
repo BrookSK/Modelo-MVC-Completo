@@ -69,22 +69,4 @@ class ClassRender{
             include(DIRREQ."app/view/{$this->getDir()}/Footer.php");
         }
     }
-    #Adiciona o head GERAL do site
-    public function addHeadCabecalhos(){
-        if(file_exists(DIRREQ."app/view/cabecalhos/Head.php")){
-            include(DIRREQ."app/view/cabecalhos/Head.php");
-        }
-    }
-    #Adiciona o header GERAL do site
-    public function addHeaderCabecalhos(){
-        if(file_exists(DIRREQ."app/view/cabecalhos/Header.php")){
-            include(DIRREQ."app/view/cabecalhos/Header.php");
-        }
-    }
-    #Adiciona o footer GERAL do site
-    public function addFooterCabecalhos(){
-        if(file_exists(DIRREQ."app/view/cabecalhos/Footer.php")){
-            include(DIRREQ."app/view/cabecalhos/Footer.php");
-        }
-    }
 }

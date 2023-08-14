@@ -2,26 +2,33 @@
 namespace App\Controller;
 
 use Src\Classes\ClassRender;
-use Src\Interfaces\InterfaceView;
 use App\Model\ClassCadastro;
 
 class ControllerCadastro extends ClassCadastro{
 
+    protected $Id;
     protected $Nome;
     protected $Sexo;
     protected $Cidade;
 
+    use \Src\Traits\TraitUrlParser;
+
     public function __construct(){
 
-        $Render = new ClassRender();
-        $Render->setTitle("Cadastro");
-        $Render->setDescription("Faça seu cadastro");
-        $Render->setKeywords("cadastro de clientes, cadastro");
-        $Render->setDir("cadastro");
-        $Render->renderLayout();
+        if(count($this->parserUrl())==1){
+            $Render = new ClassRender();
+            $Render->setTitle("Cadastro");
+            $Render->setDescription("Faça seu cadastro");
+            $Render->setKeywords("cadastro de clientes, cadastro");
+            $Render->setDir("cadastro");
+            $Render->renderLayout();
+        }
     }
 
     public function recVariaveis(){
+        if(isset($_POST['Id'])){
+            $this->Id = $_POST['Id'];
+        }
         if(isset($_POST['Nome'])){
             $this->Nome = filter_input(INPUT_POST, 'Nome', FILTER_SANITIZE_SPECIAL_CHARS);
         }
@@ -36,7 +43,26 @@ class ControllerCadastro extends ClassCadastro{
     #Chamar o método de cadastro da ClassCadastro
     public function cadastrar(){
         $this->recVariaveis();
-        parent::cadastroClientes($this->Nome, $this->Sexo, $this->Cidade);
+        $this->cadastroClientes($this->Nome, $this->Sexo, $this->Cidade);
         echo "Cadastro efetuado com sucesso!";
+    }
+    #Selecionar e exibir os dados no banco de dados
+    public function seleciona(){
+        $this->recVariaveis();
+        $B = $this->selecionaClientes($this->Nome, $this->Sexo, $this->Cidade);
+        echo "<form name='FormDeletar' id='FormDeletar' action='".DIRPAGE."cadastro/deletar' method='post'>";
+        echo "<table class='Table' border='1'><tr><td>Ação</td><td>Nome</td><td>Sexo</td><td>Cidade</td></tr>";
+        foreach($B as $C){
+            echo"<tr><td><input type='checkbox' id='Id' name='Id[]' value='$C[Id]'></td><td>$C[Nome]</td><td>$C[Sexo]</td><td>$C[Cidade]</td></tr>";
+        }
+        echo "</table><input type='submit' value='Deletar'></form>";
+    }
+    #Deletar dados do banco de dados
+    public function deletar(){
+        $this->recVariaveis();
+
+        foreach($this->Id as $IdDeletar){
+            $this->deletarClientes($IdDeletar);
+        }
     }
 }
